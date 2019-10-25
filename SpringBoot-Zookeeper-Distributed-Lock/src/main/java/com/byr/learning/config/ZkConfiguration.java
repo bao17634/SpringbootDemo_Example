@@ -1,6 +1,6 @@
-package com.dashuai.learning.zookeeper.config;
+package com.byr.learning.config;
 
-import com.dashuai.learning.zookeeper.model.WrapperZk;
+
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
@@ -11,14 +11,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ZkConfiguration {
     @Autowired
-    WrapperZk wrapperZk;
+    ConfigProperties configProperties;
 
     @Bean(initMethod = "start")
     public CuratorFramework curatorFramework() {
         return CuratorFrameworkFactory.newClient(
-                wrapperZk.getConnectString(),
-                wrapperZk.getSessionTimeoutMs(),
-                wrapperZk.getConnectionTimeoutMs(),
-                new RetryNTimes(wrapperZk.getRetryCount(), wrapperZk.getElapsedTimeMs()));
+                configProperties.getConnectString(),
+                configProperties.getSessionTimeoutMs(),
+                configProperties.getConnectionTimeoutMs(),
+                new RetryNTimes(configProperties.getRetryCount(), configProperties.getElapsedTimeMs()));
     }
 }

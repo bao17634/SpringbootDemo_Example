@@ -1,4 +1,4 @@
-package com.dashuai.learning.zookeeper.lock;
+package com.byr.learning.zookeeper.lock;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
@@ -27,7 +27,7 @@ import java.util.concurrent.CountDownLatch;
  */
 @Slf4j
 public class DistributedLockByZookeeper {
-    private final static String ROOT_PATH_LOCK = "dashuai";
+    private final static String ROOT_PATH_LOCK = "byr";
 
     private CountDownLatch countDownLatch = new CountDownLatch(1);
 
@@ -36,59 +36,6 @@ public class DistributedLockByZookeeper {
      */
     @Autowired
     CuratorFramework curatorFramework;
-
-    /**
-     * 获取分布式锁
-     * 创建一个临时节点，
-     *
-     * @param path the path
-     */
-    public void acquireDistributedLock(String path) {
-        String keyPath = "/" + ROOT_PATH_LOCK + "/" + path;
-        while (true) {
-            try {
-                curatorFramework.create()
-                        .creatingParentsIfNeeded()
-                        .withMode(CreateMode.EPHEMERAL)
-                        .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)
-                        .forPath(keyPath);
-                log.info("success to acquire lock for path:{}", keyPath);
-                break;
-            } catch (Exception e) {
-                //抢不到锁，进入此处!
-                log.info("failed to acquire lock for path:{}", keyPath);
-                log.info("while try again .......");
-                try {
-                    if (countDownLatch.getCount() <= 0) {
-                        countDownLatch = new CountDownLatch(1);
-                    }
-                    //避免请求获取不到锁，重复的while，浪费CPU资源
-                    countDownLatch.await();
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
-    }
-
-    /**
-     * 释放分布式锁
-     *
-     * @param path the  节点路径
-     * @return the boolean
-     */
-    public boolean releaseDistributedLock(String path) {
-        try {
-            String keyPath = "/" + ROOT_PATH_LOCK + "/" + path;
-            if (curatorFramework.checkExists().forPath(keyPath) != null) {
-                curatorFramework.delete().forPath(keyPath);
-            }
-        } catch (Exception e) {
-            log.error("failed to release lock,{}", e);
-            return false;
-        }
-        return true;
-    }
 
     /**
      * 创建 watcher 事件
@@ -115,6 +62,7 @@ public class DistributedLockByZookeeper {
             });
         } catch (Exception e) {
             log.info("监听是否锁失败!{}", e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -125,6 +73,7 @@ public class DistributedLockByZookeeper {
         curatorFramework = curatorFramework.usingNamespace("lock-namespace");
         String path = "/" + ROOT_PATH_LOCK;
         try {
+            Thread.sleep(1000);
             if (curatorFramework.checkExists().forPath(path) == null) {
                 curatorFramework.create()
                         .creatingParentsIfNeeded()
@@ -136,6 +85,7 @@ public class DistributedLockByZookeeper {
             log.info("root path 的 watcher 事件创建成功");
         } catch (Exception e) {
             log.error("connect zookeeper fail，please check the log >> {}", e.getMessage(), e);
+            throw new RuntimeException(e);
         }
     }
 

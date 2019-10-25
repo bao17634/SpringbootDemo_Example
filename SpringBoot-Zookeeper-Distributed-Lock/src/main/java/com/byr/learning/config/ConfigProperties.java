@@ -1,4 +1,4 @@
-package com.dashuai.learning.zookeeper.model;
+package com.byr.learning.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 @ConfigurationProperties(prefix = "curator")
-public class WrapperZk {
+public class ConfigProperties {
     /**
      * 重试次数
      */

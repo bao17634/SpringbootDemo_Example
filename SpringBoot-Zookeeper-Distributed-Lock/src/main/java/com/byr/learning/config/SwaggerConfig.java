@@ -1,4 +1,4 @@
-package com.dashuai.learning.zookeeper.config;
+package com.byr.learning.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +33,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(metaData())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.dashuai.learning.zookeeper.api"))
+                .apis(RequestHandlerSelectors.basePackage("com.byr.learning.zookeeper.api"))
                 .paths(PathSelectors.any())
                 .build();
 
@@ -45,7 +45,7 @@ public class SwaggerConfig {
                 .title("API文档")
                 .description("描述")
                 .termsOfServiceUrl("")
-                .contact(new Contact("dashuai", "", ""))
+                .contact(new Contact("byr", "", ""))
                 .version("1.0")
                 .build();
     }

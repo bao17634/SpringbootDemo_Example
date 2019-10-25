@@ -1,6 +1,6 @@
-package com.dashuai.learning.zookeeper.config;
+package com.byr.learning.config;
 
-import com.dashuai.learning.zookeeper.lock.DistributedLockByZookeeper;
+import com.byr.learning.zookeeper.lock.DistributedLockByZookeeper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
